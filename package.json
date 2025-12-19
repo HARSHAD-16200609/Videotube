@@ -1,0 +1,15 @@
+{
+  "name": "backend_project_complex",
+  "version": "1.0.0",
+  "description": "backend (youtube)",
+  "main": "index.js",
+  "scripts": {
+    "test": "start"
+  },
+  "keywords": [
+    "backend",
+    "youtube"
+  ],
+  "author": "harshad diwate",
+  "license": "ISC"
+}
