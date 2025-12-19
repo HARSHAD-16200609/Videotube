@@ -2,14 +2,18 @@
   "name": "backend_project_complex",
   "version": "1.0.0",
   "description": "backend (youtube)",
-  "main": "index.js",
+  "main": "nodemon src/index.js",
+  "type": "module",
   "scripts": {
-    "test": "start"
+    "dev": "nodemon index.js"
   },
   "keywords": [
     "backend",
     "youtube"
   ],
   "author": "harshad diwate",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
 }
