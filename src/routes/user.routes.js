@@ -1,15 +1,16 @@
 import { Router } from "express";
-
-const router = Router()
-
-
-router.get('api/v1/upload',()=>{
-  console.log("hello ");
-    
-})
+import registerUser from "../controllers/user.controller.js";
+const Userrouter = Router()
 
 
 
 
-export default router;
+Userrouter.route("/register").get(registerUser)
+
+
+
+
+
+
+export default Userrouter;
 
