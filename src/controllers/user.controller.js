@@ -1,12 +1,11 @@
 import { async_handler } from "../utils/async-handler.js";
-import {v2 as cloudinary} from "cloudinary"
 import { API_Error } from "../utils/Api_error.js";
 import { User } from "../models/users.model.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { uploadOnCloudinary,deleteFromCloudinary } from "../utils/cloudinary.js";
 import bcrypt from "bcrypt";
 import { Api_Response } from "../utils/Api_Response.js";
 import jwt from "jsonwebtoken"
-import upload from "../middlewares/multer.middleware.js";
+
 
 
 const registerUser = async_handler(async (req, res) => {
@@ -293,7 +292,7 @@ const userAvatarUpdate = async_handler(async(req,res)=>{
    {new:true}).select("-refreshToken -watchHistory -password -email")
   
    
-    await cloudinary.uploader.destroy(req.user.avatarPubId)
+    deleteFromCloudinary(req.user.avatarPubId)
 
    
   res.status(201).json(new Api_Response(200,newUser,"Avatar changed sucessfully"))
@@ -319,7 +318,7 @@ const coverImgUpdate = async_handler(async(req,res)=>{
    {new:true}).select("-refreshToken -watchHistory -password -email")
   
    
-    await cloudinary.uploader.destroy(req.user.coverPubId)
+    deleteFromCloudinary(req.user.coverPubId)
 
    
   res.status(201).json(new Api_Response(200,newUser,"cover img changed sucessfully"))
