@@ -1,4 +1,5 @@
 import { async_handler } from "../utils/async-handler.js";
+import {v2 as cloudinary} from "cloudinary"
 import { API_Error } from "../utils/Api_error.js";
 import { User } from "../models/users.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
@@ -46,12 +47,12 @@ const registerUser = async_handler(async (req, res) => {
     coverImage_local_path = req.files?.coverImage[0]?.path;
   }
 
-  const avatar_url = await uploadOnCloudinary(avatar_local_path);
-  const coverImage_url = await uploadOnCloudinary(coverImage_local_path);
-  console.log(avatar_url);
-  console.log(coverImage_url);
+  const avatar = await uploadOnCloudinary(avatar_local_path);
+  const coverImage = await uploadOnCloudinary(coverImage_local_path);
+  console.log(avatar.secure_url);
+  console.log(coverImage.secure_url);
 
-  if (!(avatar_url && coverImage_url)) {
+  if (!(avatar && coverImage)) {
     throw new API_Error(
       500,
       "Internal server Error : Files failed to upload try again !!!"
@@ -63,8 +64,10 @@ const registerUser = async_handler(async (req, res) => {
     email: email,
     username: username.toLowerCase(),
     password: password,
-    avatar: avatar_url,
-    coverImage: coverImage_url,
+    avatar: avatar.secure_url,
+    avatarPubId:avatar.public_id,
+    coverImage: coverImage.secure_url,
+    coverPubId:coverImage.public_id
   });
   // IMP for futher reference new syntax
   const createdUser = await User.findById(user._id).select(
@@ -274,22 +277,54 @@ const updateAccountDetails = async_handler(async(req, res) => {
 const userAvatarUpdate = async_handler(async(req,res)=>{
   const avatarLocalPath = req.file?.path;
   
-  if(!avatarLocalPath) throw new API_Error(400,"Please attach an Image file")
+  if(!avatarLocalPath) throw new API_Error(400,"Please attach an Image file (Avatar Img")
 
    const newAvatarPath= await uploadOnCloudinary(avatarLocalPath);
-console.log(newAvatarPath);
 
-    if(!newAvatarPath) throw new API_Error(500,"File Failed to Upload")
-
+ 
+    if(!newAvatarPath) throw new API_Error(500,"File Failed to Upload (avatar img)")
  const newUser=await User.findByIdAndUpdate(req.user?._id,
     {
-   $set:{avatar: newAvatarPath}
+   $set:{
+    avatar: newAvatarPath.secure_url,
+    avatarPubId:newAvatarPath.public_id
+  }
    },
-   {new:true})
+   {new:true}).select("-refreshToken -watchHistory -password -email")
+  
    
+    await cloudinary.uploader.destroy(req.user.avatarPubId)
+
    
   res.status(201).json(new Api_Response(200,newUser,"Avatar changed sucessfully"))
 })
+
+
+const coverImgUpdate = async_handler(async(req,res)=>{
+  const coverImgLocalPath = req.file?.path;
+  
+  if(!coverImgLocalPath) throw new API_Error(400,"Please attach an Image file(Cover Img)")
+
+   const newcoverImgPath= await uploadOnCloudinary(coverImgLocalPath);
+
+ 
+    if(!newcoverImgPath) throw new API_Error(500,"File Failed to Upload (cover img)")
+ const newUser=await User.findByIdAndUpdate(req.user?._id,
+    {
+   $set:{
+    coverImage: newcoverImgPath.secure_url,
+    coverPubId:newcoverImgPath.public_id
+  }
+   },
+   {new:true}).select("-refreshToken -watchHistory -password -email")
+  
+   
+    await cloudinary.uploader.destroy(req.user.coverPubId)
+
+   
+  res.status(201).json(new Api_Response(200,newUser,"cover img changed sucessfully"))
+})
+
 
 export {
   registerUser,
@@ -299,5 +334,6 @@ export {
    changeCurrentPassword ,
    updateAccountDetails,
    getCurrentUser,
-   userAvatarUpdate
+   userAvatarUpdate,
+   coverImgUpdate
   };

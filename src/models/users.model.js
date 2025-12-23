@@ -36,8 +36,16 @@ const userSchema = new Schema(
       type: String,
       required: true, // cloudinary url
     },
+    avatarPubId: {
+      type: String,
+      default: "",
+    },
     coverImage: {
       type: String,
+    },
+    coverPubId: {
+      type: String,
+      default: "",
     },
     password: {
       type: String,
@@ -45,7 +53,7 @@ const userSchema = new Schema(
     },
     refreshToken: {
       type: String,
-      default:""
+      default: "",
     },
   },
   { timestamps: true }
@@ -55,50 +63,39 @@ userSchema.plugin(mongooseAggregatePaginate);
 
 // mongoose hook like event listener in js dom
 userSchema.pre("save", async function () {
-  if (!this.isModified("password")) return 
+  if (!this.isModified("password")) return;
 
-  this.password =await bcrypt.hash(this.password, 10);
+  this.password = await bcrypt.hash(this.password, 10);
   // we dont use next() in mongoose async prehooks
   // next();
 });
-
-
 
 userSchema.methods.isPasswordCorrect = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
-
 userSchema.methods.generateAccessToken = async function () {
-  // this was  causing error when generate token func used in controllers 
+  // this was  causing error when generate token func used in controllers
   // if (!isPasswordCorrect(this.password)) return;
 
   //also wrong way as this.isPassword returns an prommise and promise are truthy always
-  //therefore net below condition in if is always false so acess token is generated 
+  //therefore net below condition in if is always false so acess token is generated
   // if (!this.isPasswordCorrect(this.password)) return;
 
- // pass check logic req here
+  // pass check logic req here
 
-  return jwt.sign(
-    { _id: this._id,},
-    process.env.ACCESS_TOKEN_SECRET,
-    {
-      expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
-    }
-  )
+  return jwt.sign({ _id: this._id }, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
+  });
 };
 userSchema.methods.generateRefreshToken = async function () {
   if (!this.isPasswordCorrect(this.password)) return;
 
-  return jwt.sign(
-    { _id: this._id },
-    process.env.REFRESH_TOKEN_SECRET,
-    {
-      expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
-    }
-  );
+  return jwt.sign({ _id: this._id }, process.env.REFRESH_TOKEN_SECRET, {
+    expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
+  });
 };
 
 const User = mongoose.model("User", userSchema);
 
-export {User}
+export { User };

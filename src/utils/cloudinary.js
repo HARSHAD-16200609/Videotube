@@ -4,8 +4,7 @@ import fs from "fs";
 let isConfigured = false;
 
 const uploadOnCloudinary = async (localFilePath) => {
-  
-    if (!isConfigured) {
+  if (!isConfigured) {
     cloudinary.config({
       cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
       api_key: process.env.CLOUDINARY_API_KEY,
@@ -21,12 +20,14 @@ const uploadOnCloudinary = async (localFilePath) => {
       resource_type: "auto",
     });
 
-
     if (fs.existsSync(localFilePath)) {
       fs.unlinkSync(localFilePath);
     }
 
-    return response.url;
+    return {
+      secure_url: response.secure_url,
+      public_id: response.public_id,
+    };
   } catch (error) {
     console.error("Cloudinary upload failed:", error.message);
 
