@@ -14,6 +14,10 @@ catch(error){
 
 async function connectdb(connection_url) {
   try {
+     if (mongoose.connection.readyState === 1) {
+      console.log("Database already connected");
+      return;
+    }
     const connection_instance = await mongoose.connect(connection_url);
     
     console.log(
