@@ -8,7 +8,7 @@ import {
 import bcrypt from "bcrypt";
 import { Api_Response } from "../utils/Api_Response.js";
 import jwt from "jsonwebtoken";
-
+import mongoose from "mongoose"
 const registerUser = async_handler(async (req, res) => {
     //algorithm
     // get user details from frontend
