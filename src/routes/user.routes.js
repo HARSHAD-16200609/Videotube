@@ -24,12 +24,12 @@ Userrouter.route("/login").post(loginUser)
 Userrouter.route("/logout").post(verifyJWT,logoutUser)
 Userrouter.route("/refaccessToken").post(refreshAccessToken)
 Userrouter.route("/changePassword").post(verifyJWT,changeCurrentPassword)
-Userrouter.route("/avatarUpdate").post(verifyJWT,upload.single("avatar"),userAvatarUpdate)
-Userrouter.route("/coverImgUpdate").post(verifyJWT,upload.single("coverImg"),coverImgUpdate)
+Userrouter.route("/avatarUpdate").patch(verifyJWT,upload.single("avatar"),userAvatarUpdate)
+Userrouter.route("/coverImgUpdate").patch(verifyJWT,upload.single("coverImg"),coverImgUpdate)
 Userrouter.route("/getCurrentUser").get(verifyJWT,getCurrentUser)
-Userrouter.route("/changeUserDetails").post(verifyJWT,updateAccountDetails)
+Userrouter.route("/changeUserDetails").patch(verifyJWT,updateAccountDetails)
 Userrouter.route("/getWatchHistory").get(verifyJWT,getWatchHistory)
-Userrouter.route("/getChannelProfile").gett(verifyJWT,getChannelProfile)
+Userrouter.route("/c/:username").get(verifyJWT,getChannelProfile)
 
 
 
