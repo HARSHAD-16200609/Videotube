@@ -1,8 +1,8 @@
-import {Schema} from "mongoose"
+import mongoose ,{Schema} from "mongoose"
 
 
 const subscriptionSchema= new Schema({
-    subscribers:{
+    subscriber:{
         type:Schema.Types.ObjectId, // subcribers of respecitive channel
         ref:"User"
     },
@@ -11,6 +11,15 @@ const subscriptionSchema= new Schema({
         ref:"User"
     }
 },{timestamps:true })
+
+// to prevent duplicate subscriptions in time of two request at same time 
+//code cant handle this
+subscriptionSchema.index(
+  { subscriber: 1, channel: 1 },
+  { unique: true }
+);
+
+
 
 const Subscription = mongoose.model("Subscription",subscriptionSchema)
 
