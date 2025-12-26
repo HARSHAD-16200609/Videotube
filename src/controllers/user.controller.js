@@ -9,6 +9,8 @@ import bcrypt from "bcrypt";
 import { Api_Response } from "../utils/Api_Response.js";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose"
+
+
 const registerUser = async_handler(async (req, res) => {
     //algorithm
     // get user details from frontend
@@ -348,12 +350,7 @@ const getChannelProfile = async_handler(async (req, res) => {
              * Only user with matching username passes to next stage
              */
         },
-        /**
-         * $lookup (JOIN)
-         * Fetches all subscriptions where:
-         * channel === current user's _id
-         * These are the SUBSCRIBERS of this channel
-         */
+     
         {
             $lookup: {
                 from: "subscriptions", // collection to join
@@ -362,12 +359,7 @@ const getChannelProfile = async_handler(async (req, res) => {
                 as: "subscribers", // output array field
             },
         },
-        /**
-         * $lookup (JOIN)
-         * Fetches all subscriptions where:
-         * subscriber === current user's _id
-         * These are channels THIS user subscribed to
-         */
+    
         {
             $lookup: {
                 from: "subscriptions",
@@ -393,12 +385,7 @@ const getChannelProfile = async_handler(async (req, res) => {
                 },
             },
         },
-        /**
-         * $project
-         * Selects which fields to return (like SELECT in SQL)
-         * 1 = include field
-         * 0 = exclude field
-         */
+       
         {
             $project: {
                 fullName: 1,
