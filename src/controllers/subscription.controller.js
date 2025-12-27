@@ -43,6 +43,7 @@ const toggleSubscription = async_handler(async (req, res) => {
 // controller to return subscriber list of a channel
 const getUserChannelSubscribers = async_handler(async (req, res) => {
     const { channelId } = req.params;
+
     const userId = req.user._id;
     if (!isValidObjectId(channelId))
         throw new API_Error(400, "Invalid ChannelId");
@@ -51,22 +52,44 @@ const getUserChannelSubscribers = async_handler(async (req, res) => {
     const channelObjectId = new mongoose.Types.ObjectId(channelId);
     const userOjectId = new mongoose.Types.ObjectId(req.user._id);
 
-    const channel = await Subscription.find({ channel: channelId });
-
-    if (!channel) {
-        throw new API_Error(404, "Channel not found");
-    }
-
     if (userOjectId.equals(channelObjectId)) {
-        const subscribers = await Subscription.find({ channel: channelId });
-        if (!subscribers) throw new API_Error(404, "NO Subscriptions Found");
+        const Subscribers = await Subscription.aggregate([
+            {
+                $match: {
+                    channel: new mongoose.Types.ObjectId(channelId),
+                },
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "subscriber",
+                    foreignField: "_id",
+                    as: "Subscribers",
+                    pipeline: [
+                        {
+                            $project: {
+                                username: 1,
+                                avatar: 1,
+                            },
+                        },
+                    ],
+                },
+            },
+            { $unwind: "$Subscribers" },
+            {
+                $replaceRoot: { newRoot: "$Subscribers" },
+            },
+        ]);
+        console.log(Subscribers);
+
+        if (!Subscribers) throw new API_Error(404, "NO Subscriptions Found");
         return res
             .status(200)
             .json(
                 new Api_Response(
                     200,
-                    subscribers,
-                    subscribers.length
+                    Subscribers,
+                    Subscribers.length
                         ? "Subscribers fetched successfully"
                         : "No subscribers"
                 )
@@ -100,19 +123,26 @@ const getSubscribedChannels = async_handler(async (req, res) => {
                     },
                 ],
             },
-        }, { $unwind: "$Channels" }, // unwind here changes every elemnt of channels to an object 
-  {
-    $replaceRoot: {
-      newRoot: "$Channels", 
-      // replaces the root so that data starts from channels array but because of unwind all channels are
-      // in obj form easy to use 
-    },
-  },
+        },
+        { $unwind: "$Channels" }, // unwind here changes every elemnt of channels to an object
+        {
+            $replaceRoot: {
+                newRoot: "$Channels",
+                // replaces the root so that data starts from channels array but because of unwind all channels are
+                // in obj form easy to use
+            },
+        },
     ]);
 
     return res
         .status(200)
-        .json(new Api_Response(200, subscribedChannels, "Channels fetched successfully"));
+        .json(
+            new Api_Response(
+                200,
+                subscribedChannels,
+                "Channels fetched successfully"
+            )
+        );
 });
 
 export { toggleSubscription, getUserChannelSubscribers, getSubscribedChannels };
