@@ -3,7 +3,8 @@ import mongoose, {Schema} from "mongoose";
 const playlistSchema = new Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        index:true
     },
     description: {
         type: String,
@@ -21,6 +22,9 @@ const playlistSchema = new Schema({
     },
 }, {timestamps: true})
 
-
+playlistSchema.index(
+  { name: 1, owner: 1 },
+  { unique: true }
+);
 
 export const Playlist = mongoose.model("Playlist", playlistSchema)
