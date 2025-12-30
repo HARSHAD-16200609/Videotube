@@ -8,8 +8,7 @@ import {
 import bcrypt from "bcrypt";
 import { Api_Response } from "../utils/Api_Response.js";
 import jwt from "jsonwebtoken";
-import mongoose from "mongoose"
-
+import mongoose from "mongoose";
 
 const registerUser = async_handler(async (req, res) => {
     //algorithm
@@ -350,7 +349,7 @@ const getChannelProfile = async_handler(async (req, res) => {
              * Only user with matching username passes to next stage
              */
         },
-     
+
         {
             $lookup: {
                 from: "subscriptions", // collection to join
@@ -359,7 +358,7 @@ const getChannelProfile = async_handler(async (req, res) => {
                 as: "subscribers", // output array field
             },
         },
-    
+
         {
             $lookup: {
                 from: "subscriptions",
@@ -385,7 +384,7 @@ const getChannelProfile = async_handler(async (req, res) => {
                 },
             },
         },
-       
+
         {
             $project: {
                 fullName: 1,
@@ -411,7 +410,7 @@ const getChannelProfile = async_handler(async (req, res) => {
 });
 
 const getWatchHistory = async_handler(async (req, res) => {
-    const user = await User.aggregate([
+    const watchHistory = await User.aggregate([
         {
             $match: {
                 _id: new mongoose.Types.ObjectId(req?.user._id),
@@ -422,40 +421,56 @@ const getWatchHistory = async_handler(async (req, res) => {
                 from: "videos",
                 localField: "watchHistory",
                 foreignField: "_id",
-                as: "watchHistory",
-                pipeline: [
-                    {
-                        $lookup: {
-                            from: "users",
-                            localField: "owner",
-                            foreignField: "_id",
-                            as: "owner",
-                            pipeline: [
-                                {
-                                    $project: {
-                                        fullName: 1,
-                                        avatar: 1,
-                                        username: 1,
-                                    },
-                                },
-                            ],
-                        },
-                        
-                    },
-                    { $addFields: {
-                owner: {
-                    $first: "$owner",
-                },
-            }},
-                ],
+                as: "videos",
             },
         },
-       
+
+        { $unwind: "$videos" },
+        {
+            $project: {
+                "videos.videoFile": 1,
+                "videos.thumbnail": 1,
+                "videos.owner": 1,
+                "videos.title": 1,
+                "videos.duration": 1,
+                "videos.views": 1,
+                "videos.createdAt": 1,
+            },
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "videos.owner",
+                foreignField: "_id",
+                as: "channelOwner",
+            },
+        },
+        { $unwind: "$channelOwner" },
+        {
+            $project: {
+                _id: 1,
+
+                videoFile: "$videos.videoFile",
+                thumbnail: "$videos.thumbnail",
+                title: "$videos.title",
+                duration: "$videos.duration",
+                views: "$videos.views",
+                createdAt: "$videos.createdAt",
+                username: "$channelOwner.username",
+                avatar: "$channelOwner.avatar",
+            },
+        },
     ]);
 
-    if(!user.length) throw new API_Error(404,"User dosent Exist")
+    if (!watchHistory.length) throw new API_Error(404, "User dosent Exist");
 
-      res.status(200).json(new Api_Response(200,user[0].watchHistory,"Watch History Fetched Successfully !!!"))
+    res.status(200).json(
+        new Api_Response(
+            200,
+            watchHistory,
+            "Watch History Fetched Successfully !!!"
+        )
+    );
 });
 
 export {
@@ -469,5 +484,5 @@ export {
     userAvatarUpdate,
     coverImgUpdate,
     getChannelProfile,
-    getWatchHistory
+    getWatchHistory,
 };

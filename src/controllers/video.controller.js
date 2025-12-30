@@ -101,18 +101,31 @@ const publishAVideo = async_handler(async (req, res) => {
 });
 
 const getVideoById = async_handler(async (req, res) => {
+    const userId = new mongoose.Types.ObjectId(req.user._id);
     const { videoId } = req.params;
     if (!videoId) throw new API_Error(404, "Video Not Found!!");
-    //TODO: get video by id 
+    //TODO: get video by id
 
-     await Video.findByIdAndUpdate(videoId, { $inc: { views: 1 } }, { new: true });
-     
+    await Video.findByIdAndUpdate(
+        videoId,
+        { $inc: { views: 1 } },
+        { new: true }
+    );
+
     const video = await Video.findById(videoId).select(
         "-videoFilePubId -thumbnailPubId"
     );
     if (!video) throw new API_Error(404, "Video not found");
 
-
+    await User.findByIdAndUpdate(
+        userId,
+        {
+            $addToSet: { watchHistory: videoId },
+        },
+        {
+            new: true,
+        }
+    );
 
     return res
         .status(200)
@@ -130,9 +143,11 @@ const updateVideo = async_handler(async (req, res) => {
         throw new API_Error(400, "Please enter title and description both");
     if (!thumbnail_localPath) throw new API_Error(400, "Please Upload an file");
 
-    const video = await Video.findById(videoId).select(
-        "title description thumbnail thumbnailPubId"
-    );
+    const video = await Video.findOne({
+        _id: videoId,
+        owner: req.user._id,
+    }).select("title description thumbnail thumbnailPubId");
+
     if (!video) throw new API_Error(404, "Video not found");
     const thumbnail = await uploadOnCloudinary(thumbnail_localPath);
     const oldThumbnail = video.thumbnailPubId;
@@ -152,10 +167,7 @@ const deleteVideo = async_handler(async (req, res) => {
     const { videoId } = req.params;
     //TODO: delete video
     if (!videoId) throw new API_Error(404, "Video Not Found!!");
-    const video = await Video.findById(videoId);
-
-    console.log(video.videoFilePubId);
-    console.log(video.thumbnailPubId);
+    const video = await Video.findOne({ _id: videoId, owner: req.user._id });
 
     await deleteFromCloudinary(video.videoFilePubId, "video");
     await deleteFromCloudinary(video.thumbnailPubId);
