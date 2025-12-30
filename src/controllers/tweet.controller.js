@@ -61,6 +61,7 @@ const updateTweet = async_handler(async (req, res) => {
             },{
                 new:true
             })
+            if(!updateTweet) throw new API_Error(500,"Failed To Update the Tweet")
     
              return res.status(200).json(new Api_Response(200,updatedTweet,"Tweet updated Sucessfully!!!"))
 })
