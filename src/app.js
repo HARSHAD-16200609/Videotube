@@ -8,7 +8,7 @@ import subscriptionRouter from './routes/subscription.route.js';
 import playlistRouter from './routes/playlist.route.js';
 import commentRouter from './routes/comment.route.js';
 import likeRouter from './routes/like.route.js';
-
+import dashBoardRouter from "./routes/dashboard.route.js"
 
 
 const app = express();
@@ -31,6 +31,7 @@ app.use("/api/v1/subscriptions",subscriptionRouter)
 app.use("/api/v1/playlist",playlistRouter)
 app.use("/api/v1/comment",commentRouter)
 app.use("/api/v1/like",likeRouter)
+app.use("/api/v1/dashboard",dashBoardRouter)
 
 
 
