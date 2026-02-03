@@ -149,25 +149,33 @@ const getVideoById = async_handler(async (req, res) => {
                 username: "$Owner.username",
             },
         },
-        {$lookup:{
-            from:"comments",
-            localField:"_id",
-            foreignField:"video",
-            as:"Comments",
-            pipeline:[{$lookup:{
-                from:"users",
-                localField:"owner",
-                foreignField:"_id",
-                as:"Commentor"
-            }},{$unwind:"$Commentor"},{$project:{
-                channelAvatar:"$Commentor.avatar",
-                channelName:"$Commentor.username"
-            }}]
-
-        }}
-        ,{$unwind:
-            "$Comments"
-    },
+        {
+            $lookup: {
+                from: "comments",
+                localField: "_id",
+                foreignField: "video",
+                as: "Comments",
+                pipeline: [
+                    {
+                        $lookup: {
+                            from: "users",
+                            localField: "owner",
+                            foreignField: "_id",
+                            as: "Commentor",
+                        },
+                    },
+                    { $unwind: "$Commentor" },
+                    {
+                        $project: {
+                            content: 1,
+                            channelAvatar: "$Commentor.avatar",
+                            channelName: "$Commentor.username",
+                        },
+                    },
+                ],
+            },
+        },
+        { $unwind: "$Comments" },
     ]);
 
     if (!video) throw new API_Error(404, "Video not found");

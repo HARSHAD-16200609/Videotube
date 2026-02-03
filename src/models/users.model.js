@@ -88,6 +88,8 @@ userSchema.methods.generateAccessToken = async function () {
     expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
   });
 };
+
+
 userSchema.methods.generateRefreshToken = async function () {
   if (!this.isPasswordCorrect(this.password)) return;
 
