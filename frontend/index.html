@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamVision - Home</title>
+    <meta name="description" content="Watch and share videos on StreamVision - Your video streaming platform">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#FF0000',
+                        dark: {
+                            100: '#0F0F0F',
+                            200: '#1A1A1A',
+                            300: '#272727',
+                            400: '#3F3F3F',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-dark-100 text-white font-sans">
+    <!-- Navigation Bar -->
+    <nav class="fixed top-0 left-0 right-0 bg-dark-100 border-b border-dark-400 z-50">
+        <div class="flex items-center justify-between px-4 py-2">
+            <!-- Left Section -->
+            <div class="flex items-center gap-4">
+                <button id="menuBtn" class="p-2 hover:bg-dark-300 rounded-full transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+                <a href="index.html" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <div class="w-8 h-8 bg-gradient-to-br from-red-600 to-red-500 rounded-lg flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M10 15l5.19-3L10 9v6m11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.09L22 12c0 2.19-.16 3.8-.44 4.83-.25.9-.83 1.48-1.73 1.73-.47.13-1.33.22-2.65.28-1.3.07-2.49.1-3.59.1L12 19c-4.19 0-6.8-.16-7.83-.44-.9-.25-1.48-.83-1.73-1.73-.13-.47-.22-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.09L2 12c0-2.19.16-3.8.44-4.83.25-.9.83-1.48 1.73-1.73.47-.13 1.33-.22 2.65-.28 1.3-.07 2.49-.1 3.59-.1L12 5c4.19 0 6.8.16 7.83.44.9.25 1.48.83 1.73 1.73z"/>
+                        </svg>
+                    </div>
+                    <span class="text-xl font-bold">StreamVision</span>
+                </a>
+            </div>
+
+            <!-- Center Section - Search -->
+            <div class="flex-1 max-w-2xl mx-4">
+                <div class="flex items-center">
+                    <div class="flex-1 flex items-center bg-dark-200 border border-dark-400 rounded-l-full overflow-hidden focus-within:border-blue-500 transition-colors">
+                        <input 
+                            type="text" 
+                            id="searchInput"
+                            placeholder="Search videos, creators, or topics" 
+                            class="w-full px-6 py-2.5 bg-transparent outline-none text-white placeholder-gray-400"
+                        >
+                    </div>
+                    <button id="searchBtn" class="px-6 py-2.5 bg-dark-300 border border-dark-400 border-l-0 rounded-r-full hover:bg-dark-400 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Section -->
+            <div class="flex items-center gap-2">
+                <button class="p-2 hover:bg-dark-300 rounded-full transition-colors" title="Create">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                    </svg>
+                </button>
+                <button class="p-2 hover:bg-dark-300 rounded-full transition-colors" title="Notifications">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                    </svg>
+                </button>
+                <button id="userMenuBtn" class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center font-semibold hover:opacity-80 transition-opacity">
+                    U
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="flex pt-14">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="fixed left-0 top-14 bottom-0 w-64 bg-dark-100 border-r border-dark-400 overflow-y-auto transition-transform duration-300 z-40">
+            <div class="py-2">
+                <!-- Main Navigation -->
+                <div class="px-3 mb-2">
+                    <a href="index.html" class="flex items-center gap-4 px-3 py-2.5 rounded-lg bg-dark-300 hover:bg-dark-400 transition-colors">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                        </svg>
+                        <span class="font-medium">Home</span>
+                    </a>
+                </div>
+                
+                <div class="px-3 mb-2">
+                    <a href="subscriptions.html" class="flex items-center gap-4 px-3 py-2.5 rounded-lg hover:bg-dark-300 transition-colors">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M20 7H4V6h16v1zm2 2v12H2V9h20zm-2 10V11H4v8h16zm-9-7v6l5-3-5-3z"/>
+                        </svg>
+                        <span class="font-medium">Subscriptions</span>
+                    </a>
+                </div>
+
+                <div class="border-t border-dark-400 my-2"></div>
+
+                <!-- Library -->
+                <div class="px-3 mb-1">
+                    <h3 class="px-3 py-2 text-sm font-semibold text-gray-400 uppercase tracking-wider">Library</h3>
+                </div>
+                
+                <div class="px-3 mb-2">
+                    <a href="history.html" class="flex items-center gap-4 px-3 py-2.5 rounded-lg hover:bg-dark-300 transition-colors">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                        </svg>
+                        <span class="font-medium">History</span>
+                    </a>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <a href="playlists.html" class="flex items-center gap-4 px-3 py-2.5 rounded-lg hover:bg-dark-300 transition-colors">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
+                        </svg>
+                        <span class="font-medium">Playlists</span>
+                    </a>
+                </div>
+
+                <div class="px-3 mb-2">
+                    <a href="liked.html" class="flex items-center gap-4 px-3 py-2.5 rounded-lg hover:bg-dark-300 transition-colors">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/>
+                        </svg>
+                        <span class="font-medium">Liked Videos</span>
+                    </a>
+                </div>
+
+                <div class="border-t border-dark-400 my-2"></div>
+
+                <!-- Subscriptions -->
+                <div class="px-3 mb-1">
+                    <h3 class="px-3 py-2 text-sm font-semibold text-gray-400 uppercase tracking-wider">Subscriptions</h3>
+                </div>
+                
+                <div id="subscriptionsList" class="px-3">
+                    <!-- Dynamic subscription list will be loaded here -->
+                    <div class="text-gray-400 text-sm px-3 py-2">Loading...</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main id="mainContent" class="flex-1 ml-64 transition-all duration-300">
+            <!-- Filter Chips -->
+            <div class="sticky top-14 bg-dark-100 border-b border-dark-400 px-6 py-3 overflow-x-auto z-30">
+                <div class="flex gap-3 min-w-max">
+                    <button class="px-4 py-1.5 bg-white text-black rounded-lg font-medium hover:bg-gray-200 transition-colors">All</button>
+                    <button class="px-4 py-1.5 bg-dark-300 rounded-lg font-medium hover:bg-dark-400 transition-colors">Music</button>
+                    <button class="px-4 py-1.5 bg-dark-300 rounded-lg font-medium hover:bg-dark-400 transition-colors">Gaming</button>
+                    <button class="px-4 py-1.5 bg-dark-300 rounded-lg font-medium hover:bg-dark-400 transition-colors">News</button>
+                    <button class="px-4 py-1.5 bg-dark-300 rounded-lg font-medium hover:bg-dark-400 transition-colors">Live</button>
+                    <button class="px-4 py-1.5 bg-dark-300 rounded-lg font-medium hover:bg-dark-400 transition-colors">Sports</button>
+                    <button class="px-4 py-1.5 bg-dark-300 rounded-lg font-medium hover:bg-dark-400 transition-colors">Learning</button>
+                    <button class="px-4 py-1.5 bg-dark-300 rounded-lg font-medium hover:bg-dark-400 transition-colors">Fashion</button>
+                </div>
+            </div>
+
+            <!-- Video Grid -->
+            <div class="p-6">
+                <div id="videoGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    <!-- Videos will be loaded dynamically -->
+                    <div class="col-span-full flex items-center justify-center py-20">
+                        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-500"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- User Menu Dropdown -->
+    <div id="userMenu" class="hidden fixed top-14 right-4 w-64 bg-dark-200 border border-dark-400 rounded-lg shadow-2xl z-50">
+        <div class="p-4 border-b border-dark-400">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center font-semibold">
+                    U
+                </div>
+                <div>
+                    <div class="font-semibold" id="userMenuName">User Name</div>
+                    <div class="text-sm text-gray-400" id="userMenuEmail">user@email.com</div>
+                </div>
+            </div>
+        </div>
+        <div class="py-2">
+            <a href="channel.html" class="flex items-center gap-3 px-4 py-2.5 hover:bg-dark-300 transition-colors">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                </svg>
+                <span>Your Channel</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-2.5 hover:bg-dark-300 transition-colors">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                </svg>
+                <span>Settings</span>
+            </a>
+            <div class="border-t border-dark-400 my-2"></div>
+            <button id="logoutBtn" class="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-dark-300 transition-colors text-left">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+                </svg>
+                <span>Sign Out</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/home.js"></script>
+</body>
+</html>
