@@ -17,7 +17,7 @@ const app = express();
 //  middlewares 
 
 app.use(cors({
-    origin: "http://localhost:8000",
+    origin: ["http://localhost:5173", "http://localhost:5174"],
     credentials: true
 }))
 app.use(express.json({limit:"16kb"}))

@@ -24,6 +24,12 @@ const registerUser = async_handler(async (req, res) => {
 
     const { username, email, fullName, password } = req.body;
 
+    console.log('Registration request received');
+    console.log('Body:', req.body);
+    console.log('Files:', req.files);
+    console.log('Avatar files:', req.files?.avatar);
+    console.log('Cover image files:', req.files?.coverImage);
+
     if (
         [username, email, fullName, password].some(
             (field) => field.trim() === ""
@@ -40,25 +46,41 @@ const registerUser = async_handler(async (req, res) => {
         throw new API_Error(409, "User already registered");
     }
 
-    const avatar_local_path = req.files?.avatar[0]?.path;
+    // Check if avatar file is provided
+    if (!req.files?.avatar || !req.files.avatar[0]) {
+        throw new API_Error(400, "Avatar file is required");
+    }
+
+    const avatar_local_path = req.files.avatar[0].path;
     let coverImage_local_path;
     if (
         req.files &&
         Array.isArray(req.files.coverImage) &&
         req.files.coverImage.length > 0
     ) {
-        coverImage_local_path = req.files?.coverImage[0]?.path;
+        coverImage_local_path = req.files.coverImage[0].path;
     }
+
+    console.log('Avatar local path:', avatar_local_path);
+    console.log('Cover image local path:', coverImage_local_path);
 
     const avatar = await uploadOnCloudinary(avatar_local_path);
     const coverImage = await uploadOnCloudinary(coverImage_local_path);
-    console.log(avatar.secure_url);
-    console.log(coverImage.secure_url);
+    
+    console.log('Avatar upload result:', avatar);
+    console.log('Cover image upload result:', coverImage);
 
-    if (!(avatar && coverImage)) {
+    if (!avatar) {
         throw new API_Error(
             500,
-            "Internal server Error : Files failed to upload try again !!!"
+            "Avatar upload failed. Please try again."
+        );
+    }
+
+    if (!coverImage) {
+        throw new API_Error(
+            500,
+            "Cover image upload failed. Please try again."
         );
     }
 
@@ -84,7 +106,15 @@ const registerUser = async_handler(async (req, res) => {
         );
     }
 
-    res.status(201).json(createdUser);
+    return res
+        .status(201)
+        .json(
+            new Api_Response(
+                201,
+                createdUser,
+                "User registered successfully"
+            )
+        );
 });
 
 const generateRefreshTokenandAccessToken = async (user) => {
@@ -122,18 +152,28 @@ const loginUser = async_handler(async (req, res) => {
     const { accessToken, refreshToken } =
         await generateRefreshTokenandAccessToken(user);
 
-    const logged_info = {
-        message: accessToken,
-    };
+    const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
+
     const options = {
         httpOnly: true,
         secure: true,
     };
 
-    res.status(200)
+    return res
+        .status(200)
         .cookie("refreshToken", refreshToken, options)
         .cookie("accessToken", accessToken, options)
-        .json(new Api_Response(200, logged_info, "logged in sucessfully"));
+        .json(
+            new Api_Response(
+                200,
+                {
+                    user: loggedInUser,
+                    accessToken,
+                    refreshToken
+                },
+                "User logged in successfully"
+            )
+        );
 });
 
 const logoutUser = async_handler(async (req, res) => {
